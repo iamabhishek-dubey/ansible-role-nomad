@@ -1,0 +1,37 @@
+---
+- name: Setting download base URL as fact [Linux]
+  set_fact:
+    nomad_download_url: https://releases.hashicorp.com/nomad
+
+- name: Downloading and unarchiving nomad binary [Linux]
+  unarchive:
+    src: "{{ nomad_download_url }}/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip"
+    dest: /tmp
+    remote_src: yes
+  register: task_result
+  until: task_result is succeeded
+  retries: 5
+  delay: 5
+
+- name: Removing the zip downloaded package [Linux]
+  file:
+    path: "/tmp/nomad_{{ nomad_version }}_linux_amd64.zip"
+    state: absent
+
+- name: Moving nomad binary to PATH location [Linux]
+  copy:
+    src: /tmp/nomad
+    dest: /usr/local/bin
+    mode: 0555
+    remote_src: yes
+  become: true
+
+- name: Creating nomad configuration directories [Linux]
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  become: true
+  with_items:
+    - "{{ nomad_data_dir }}"
+    - "{{ nomad_config_dir }}"

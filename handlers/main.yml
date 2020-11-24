@@ -1,0 +1,17 @@
+---
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: true
+
+- name: Restart nomad server service
+  systemd:
+    name: nomad-server
+    state: restarted
+  become: true
+
+- name: Restart nomad client service
+  systemd:
+    name: nomad-client
+    state: restarted
+  become: true

@@ -1,0 +1,13 @@
+---
+- name: Checking nomad hosts are defined or not
+  fail:
+    msg: "Playbook execution failed due to missing or empty required group 'nomad'"
+  when: groups['nomad'] is not defined or groups['nomad'] | length == 0
+
+- name: Checking OS compatiblity
+  fail:
+    msg: >
+      This role is supported with Debian family for now.
+      RedHat support is under construction
+  when:
+    ansible_os_family != "Debian"

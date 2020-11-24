@@ -1,0 +1,15 @@
+---
+- name: Updating system repositories [Linux (Debian)]
+  apt:
+    update_cache: yes
+  become: true
+
+- name: Installing unzip package [Linux (Debian)]
+  apt:
+    name: unzip
+    state: present
+  become: true
+  register: task_result
+  until: task_result is succeeded
+  retries: 5
+  delay: 5

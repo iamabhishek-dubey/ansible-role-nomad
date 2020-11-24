@@ -1,0 +1,7 @@
+datacenter = "{{ nomad_datacenter }}"
+data_dir = "{{ nomad_data_dir }}"
+
+client {
+    enabled = true
+    servers = {{ nomad_server_nodes.split(',') | to_json }}
+}

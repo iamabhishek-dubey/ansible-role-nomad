@@ -1,0 +1,5 @@
+---
+nomad_config_dir: /etc/nomad.d
+nomad_data_dir: /opt/nomad
+nomad_datacenter: "new-jersey-primary"
+nomad_server_port: 4647

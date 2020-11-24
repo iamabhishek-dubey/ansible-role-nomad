@@ -1,0 +1,12 @@
+datacenter = "{{ nomad_datacenter }}"
+data_dir = "{{ nomad_data_dir }}"
+
+server {
+  enabled          = true
+  bootstrap_expect = {{ groups['nomad_server'] | length }}
+  server_join {
+    retry_join = {{ groups['nomad_server'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | list | to_json }}
+    retry_max = 3
+    retry_interval = "15s"
+  }
+}

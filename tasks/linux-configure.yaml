@@ -1,0 +1,62 @@
+---
+- name: Creating nomad server configuration file [Linux]
+  template:
+    src: config-server.hcl.j2
+    dest: "{{ nomad_config_dir }}/config.hcl"
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  notify:
+    - Reload systemd daemon
+    - Restart nomad server service
+  when:
+    inventory_hostname in groups['nomad_server']
+
+- name: Setting fact for nomad cluster nodes [Linux]
+  set_fact:
+    nomad_server_nodes: |-
+      {{ groups['nomad_server'] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) 
+      | join(':4647,') }}:4647
+
+- name: Creating nomad client configuration file [Linux]
+  template:
+    src: config-client.hcl.j2
+    dest: "{{ nomad_config_dir }}/config.hcl"
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  notify:
+    - Reload systemd daemon
+    - Restart nomad client service
+  when:
+    inventory_hostname in groups['nomad_client']
+
+- name: Configuring systemd service for nomad server [Linux]
+  template:
+    src: nomad-service.j2
+    dest: /etc/systemd/system/nomad-server.service
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  notify:
+    - Reload systemd daemon
+    - Restart nomad server service
+  when:
+    inventory_hostname in groups['nomad_server']
+
+- name: Configuring systemd service for nomad client [Linux]
+  template:
+    src: nomad-service.j2
+    dest: /etc/systemd/system/nomad-client.service
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  notify:
+    - Reload systemd daemon
+    - Restart nomad client service
+  when:
+    inventory_hostname in groups['nomad_client']

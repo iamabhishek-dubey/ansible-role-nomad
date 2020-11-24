@@ -1,0 +1,23 @@
+---
+- name: Including playbook for pre-flight-checks for Nomad
+  include_tasks: pre-flight-checks.yaml
+
+- name: Including playbook for pre-requisities for Nomad [Linux]
+  include_tasks: linux-pre-requisities.yaml
+  when:
+    ansible_os_family != "Windows"
+
+- name: Including OS configuration playbook for Nomad [Linux (Debian)]
+  include_tasks: debian-os.yaml
+  when:
+    ansible_os_family == "Debian"
+
+- name: Including common installation steps for Nomad [Linux]
+  include_tasks: linux-common-steps.yaml
+  when:
+    ansible_os_family != "Windows"
+
+- name: Including common configuration steps for Nomad [Linux]
+  include_tasks: linux-configure.yaml
+  when:
+    ansible_os_family != "Windows"
