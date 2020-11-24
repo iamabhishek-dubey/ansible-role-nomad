@@ -21,3 +21,8 @@
   include_tasks: linux-configure.yaml
   when:
     ansible_os_family != "Windows"
+
+- name: Including healthcheck playbook for Nomad
+  include_tasks: healthcheck.yaml
+  when:
+    inventory_hostname in groups['nomad_server']

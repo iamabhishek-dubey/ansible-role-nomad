@@ -1,0 +1,28 @@
+---
+- name: Waiting for Nomad ports to respond [Windows, Linux]
+  wait_for:
+    port: "{{ item }}"
+    delay: 10
+  with_items:
+    - 4647
+    - 4646
+
+- name: Checking nomad server members health
+  command: nomad server members
+  register: command_result
+
+- name: Nomad server members are not ready
+  fail:
+    msg: All nomad server members are not in healthy state. Please check nomad server logs.
+  when:
+    command_result.stdout.split('\n')|length < groups['nomad_server']|length
+
+- name: Checking nomad client members health
+  command: nomad node status
+  register: command_result
+
+- name: Nomad server members are not ready
+  fail:
+    msg: All nomad server members are not in healthy state. Please check nomad server logs.
+  when:
+    command_result.stdout.split('\n')|length < groups['nomad_client']|length
