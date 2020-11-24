@@ -1,38 +1,63 @@
-Role Name
-=========
+## Ansible Role: Nomad
 
-A brief description of the role goes here.
+Ansible role to setup, manage nomad cluster/standalone
 
-Requirements
-------------
+Some of the highlighting features are:-
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+  - Cluster and Standalone setup of Nomad cluster
+  - Nomad server and client support
+  - Windows support (In development)
+  - Healthcheck integration for nomad
 
-Role Variables
---------------
+This role supports Debian family right now, other OS support is under construction.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+### Requirements
 
-Dependencies
-------------
+**No third party requirement is needed by this role**
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### Roles Variables
 
-Example Playbook
-----------------
+Roles variables are categorized into two divisions i.e. Mandatory and Optional.
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+#### Mandatory Variables
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+|**Variables**|**Default Values**|**Possible Values**|**Type**|**Description**|
+|-------------|------------------|-------------------|--------|---------------|
+| nomad_data_dir | `/opt/nomad` | `Linux path` | string | Data directory for nomad node |
+| nomad_config_dir | `/etc/nomad.d` | `Linux path` | string | Configuration directory for nomad node |
+| nomad_datacenter | `new-jersey-primary` | `Any name` | string | Name of the datacenter for nomad nodes |
 
-License
--------
+#### Optional Variables
 
-BSD
+|**Variables**|**Default Values**|**Possible Values**|**Type**|**Description**|
+|-------------|------------------|-------------------|--------|---------------|
+| nomad_version | `0.12.9` | `Nomad version` | string | Nomad version which needs to be installed |
 
-Author Information
-------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+### Usage
+
+The inventory for nomad role should look like this:-
+
+```ini
+[nomad:children]
+nomad_server
+nomad_client
+
+[nomad_server]
+nomad-server1 ansible_ssh_host=54.201.236.237
+nomad-server2 ansible_ssh_host=54.149.235.249
+nomad-server3 ansible_ssh_host=34.221.65.129
+
+[nomad_client]
+nomad-client1 ansible_ssh_host=54.200.248.248
+
+[nomad:vars]
+ansible_ssh_user=ubuntu
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+```
+
+and for running the ansible role, we will use ansible cli.
+
+```shell
+ansible-playbook -i tests/inventory tests/test.yml
+```

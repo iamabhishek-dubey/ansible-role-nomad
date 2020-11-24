@@ -1,2 +1,15 @@
-localhost
+[nomad:children]
+nomad_server
+nomad_client
 
+[nomad_server]
+nomad-server1 ansible_ssh_host=54.201.236.237
+nomad-server2 ansible_ssh_host=54.149.235.249
+nomad-server3 ansible_ssh_host=34.221.65.129
+
+[nomad_client]
+nomad-client1 ansible_ssh_host=54.200.248.248
+
+[nomad:vars]
+ansible_ssh_user=ubuntu
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
